@@ -71,32 +71,20 @@ class KGPH(object):
         self.n_entity = n_entity
 
         with tf.variable_scope("user_emb_matrix_STWS"):
-            # self.user_embedding_placeholder = tf.placeholder(tf.float32,
-            #                         [n_user, self.dim])
             self.user_emb_matrix = tf.get_variable(
                 shape=[n_user, self.dim], initializer=KGPH.get_initializer(), name='user_emb_matrix_STWS')
-            # self.user_embedding_init = self.user_emb_matrix.assign(self.user_embedding_placeholder)
 
         with tf.variable_scope("entity_emb_matrix_STWS"):
-            # self.entity_embedding_placeholder = tf.placeholder(tf.float32,
-            #                         [n_entity, self.dim])
             self.entity_emb_matrix = tf.get_variable(
                 shape=[n_entity, self.dim], initializer=KGPH.get_initializer(), name='entity_emb_matrix_STWS')
-            # self.entity_embedding_init = self.entity_emb_matrix.assign(self.entity_embedding_placeholder)
 
         with tf.variable_scope("relation_emb_matrix_STWS"):
-            # self.action_embedding_KGE_placeholder = tf.placeholder(tf.float32,
-            #                         [n_relation, self.dim, self.dim])
             self.relation_emb_matrix = tf.get_variable(
                 shape=[n_relation,self.dim], initializer=KGPH.get_initializer(), name='relation_emb_matrix_STWS')
-            # self.relation_embedding_KGE_init = self.relation_emb_KGE_matrix.assign(self.action_embedding_KGE_placeholder)
 
         with tf.variable_scope("relation_emb_KGE_matrix_STWS"):
-            # self.action_embedding_KGE_placeholder = tf.placeholder(tf.float32,
-            #                         [n_relation, self.dim, self.dim])
             self.relation_emb_KGE_matrix = tf.get_variable(
                 shape=[n_relation,self.dim, self.dim], initializer=KGPH.get_initializer(), name='relation_emb_KGE_matrix_STWS')
-            # self.relation_embedding_KGE_init = self.relation_emb_KGE_matrix.assign(self.action_embedding_KGE_placeholder)
 
         self.enti_transfer_matrix_list = []
         self.enti_transfer_bias_list = []
@@ -244,7 +232,6 @@ class KGPH(object):
             user_o = tf.matmul(tf.reshape(o_list,[-1,self.dim * (self.p_hop+1)]), self.user_mlp_matrix) + self.user_mlp_bias
         else:
             user_o = tf.matmul(tf.reshape(o_list,[-1,self.dim * (self.p_hop)]), self.user_mlp_matrix) + self.user_mlp_bias
-        # user_o = self.act(user_o)
 
         transfer_o.append(user_o)
 
@@ -276,63 +263,28 @@ class KGPH(object):
 
 
         entity_vectors = [tf.nn.embedding_lookup(self.entity_emb_matrix, i) for i in entities]
-        # entity_vectors = [tf.reshape(tf.matmul(tf.reshape(et_v,[-1,self.dim]), self.transform_agg_matrix),[self.batch_size,-1,self.dim]) for et_v in entity_vectors]
         relation_vectors = [tf.nn.embedding_lookup(self.relation_emb_matrix, i) for i in relations]
 
         if self.args.User_orient == True:
             print('user_orient')
             for index in range(len(transfer_o)):
-                # [b,1,dim]
                 transfer_o[index] = tf.expand_dims(transfer_o[index], axis=1)
-                # print('transfer_o[index] = ', transfer_o[index].shape)
             for index in range(len(transfer_o)):
                 for e_i in range(len(entity_vectors)):
-                    # print('entity_vectors[e_i] = ', entity_vectors[e_i].shape)
                     # [b,1,dim]
                     n_entities = entity_vectors[e_i] + transfer_o[index]
-                    # print('n_entities = ', n_entities.shape)
                     # [-1,dim]
                     n_entities = tf.matmul(tf.reshape(n_entities, [-1,self.dim]), self.transfer_matrix_list[e_i]) + self.transfer_matrix_bias[e_i]
-                    # n_entities = self.act(n_entities)
-                    # print('n_entities = ', n_entities.shape)
                     # [b,n,dim]
                     entity_vectors[e_i] = tf.reshape(n_entities, [self.batch_size, entity_vectors[e_i].shape[1],self.dim])
-                    # print('entity_vectors[e_i] = ', entity_vectors[e_i].shape)
                     # [b,?*n,dim]
                     transfer_o[index] = tf.tile(transfer_o[index],[1,self.n_neighbor,1])
 
-        # if self.args.HO_only != True and self.args.User_orient == True:
-        #     print('user_orient')
-        #     for index in range(len(transfer_o)):
-        #         # [b,1,dim]
-        #         transfer_o[index] = tf.expand_dims(transfer_o[index], axis=1)
-        #         # print('transfer_o[index] = ', transfer_o[index].shape)
-        #     for index in range(len(transfer_o)):
-        #         for e_i in range(len(entity_vectors)):
-        #             # print('entity_vectors[e_i] = ', entity_vectors[e_i].shape)
-        #             # [b,1,dim]
-        #             concat_e_t = [entity_vectors[e_i], transfer_o[index]]
-        #             n_entities = tf.concat(concat_e_t, -1)
-        #             # [-1,2*dim]
-        #             n_entities = tf.matmul(tf.reshape(n_entities, [-1,2*self.dim]), self.transfer_matrix_list[0]) + self.transfer_matrix_bias[0]
-        #             # [b,n,dim]
-        #             entity_vectors[e_i] = tf.reshape(n_entities, [self.batch_size, entity_vectors[e_i].shape[1],self.dim])
-        #             # print('entity_vectors[e_i] = ', entity_vectors[e_i].shape)
-        #             # [b,?*n,dim]
-        #             transfer_o[index] = tf.tile(transfer_o[index],[1,self.n_neighbor,1])
 
         for n in range(self.n_mix_hop):
             mix_hop_tmp = []
             mix_hop_tmp.append(entity_vectors)
             for i in range(self.h_hop):
-                # if i == self.h_hop - 1:
-                #     aggregator = self.aggregator_class(self.save_model_name,self.batch_size, self.dim, act=tf.nn.tanh, name = i)
-                # else:
-                # aggregator = self.aggregator_class(self.save_model_name,self.batch_size, self.dim, name = str(i)+'_'+str(n))
-
-                # if i == self.h_hop - 1:
-                #     aggregator = self.aggregator_class(self.save_model_name,self.batch_size, self.dim, act=tf.nn.tanh, name =str(i)+'_'+str(n))
-                # else:
                 aggregator = self.aggregator_class(self.save_model_name,self.batch_size, self.dim, name = str(i)+'_'+str(n), User_orient_rela = self.User_orient_rela)
                 aggregators.append(aggregator)
                 entity_vectors_next_iter = []
@@ -354,11 +306,8 @@ class KGPH(object):
                 mip_hop = tf.concat(mip_hop, -1)
                 mip_hop = tf.matmul(tf.reshape(mip_hop,[-1,self.dim * (self.h_hop+1)]), self.enti_transfer_matrix_list[n]) + self.enti_transfer_bias_list[n]
                 mip_hop = tf.reshape(mip_hop,[self.batch_size,-1,self.dim]) 
-                # if n == self.n_mix_hop - 1: mip_hop = tf.nn.tanh(mip_hop)
-                # else: mip_hop = self.act(mip_hop)
                 entity_vectors.append(mip_hop)
                 if len(entity_vectors) == (self.n_mix_hop-(n+1))*self.h_hop+1:  break
-                # if len(entity_vectors) == (self.n_mix_hop-(n+1))*self.h_hop+1: print((self.n_mix_hop-(n+1))*self.h_hop+1); input(); break
 
         mix_hop_res = tf.reshape(entity_vectors[0], [self.batch_size, self.dim])
 

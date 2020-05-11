@@ -88,8 +88,6 @@ class SumAggregator(Aggregator):
 
     def _call(self, self_vectors, neighbor_vectors, neighbor_relations, user_embeddings, masks):
         # [batch_size, -1, dim]
-        # print('self_vectors shape = ', self_vectors.shape)
-        # print('self_vectors shape = ', neighbor_vectors.shape)
         # input()
         neighbors_agg = self._mix_neighbor_vectors(neighbor_vectors, neighbor_relations, user_embeddings)
 
@@ -125,7 +123,6 @@ class SumAggregator_urh_matrix(Aggregator):
 
     def _call(self, self_vectors, neighbor_vectors, neighbor_relations, user_embeddings, masks):
         # [batch_size, -1, dim]
-        # neighbors_agg = self._mix_neighbor_vectors(neighbor_vectors, neighbor_relations, user_embeddings)
         if self.User_orient_rela == True:
             print('self.User_orient_rela  = ', self.User_orient_rela, '_mix_neighbor_vectors_urh')
             neighbors_agg = self._mix_neighbor_vectors_urh(self_vectors, user_embeddings, neighbor_vectors, neighbor_relations)
@@ -149,37 +146,28 @@ class SumAggregator_urh_matrix(Aggregator):
         # [batch_size, 1, 1, dim]
         user_embeddings = tf.reshape(user_embeddings, [self.batch_size, 1, 1, self.dim])
         user_embeddings = tf.tile(user_embeddings, multiples=[1, neighbor_relations.get_shape()[1], neighbor_relations.get_shape()[2], 1])
-        # print('user_embeddings shape = ', user_embeddings.get_shape())
-        # input()
+
 
         # [batch_size, -1, 1, dim]
         self_vectors = tf.expand_dims(self_vectors, axis=2)
         self_vectors = tf.tile(self_vectors, multiples=[1, 1, neighbor_relations.get_shape()[2], 1])
-        # print('self_vectors shape = ', self_vectors.get_shape())
-        # input()
 
         # [batch_size, -1, -1, dim * 4]
         urh_matrix = [user_embeddings, neighbor_relations, self_vectors]
         urh_matrix = tf.concat(urh_matrix, -1)
         # [-1, 1]
         urh_matrix = tf.matmul(tf.reshape(urh_matrix,[-1, 3 * self.dim]), self.urh_weights)
-        # print('urh_matrix shape = ', urh_matrix.get_shape())
-        # input()
+
 
         probs = tf.reshape(urh_matrix,[neighbor_vectors.get_shape()[0],neighbor_vectors.get_shape()[1],neighbor_vectors.get_shape()[2]])
-        # print('probs shape = ',probs.get_shape())
-        # input()
+
         # [batch_size, -1, n_memory]
         probs_normalized = tf.nn.softmax(probs)
         # [batch_size,-1, n_memory, 1]
         probs_expanded = tf.expand_dims(probs_normalized, axis= -1)
-        # print('probs_expanded shape = ',probs_expanded.get_shape())
-        # input()
 
         # [batch_size, -1, n_memory]
         neighbors_aggregated = tf.reduce_mean(probs_expanded * neighbor_vectors, axis=2)
-        # print('neighbors_aggregated shape = ',neighbors_aggregated.get_shape())
-        # input()
 
         return neighbors_aggregated
 
