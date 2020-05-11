@@ -1,1 +1,1 @@
-MVIN: Learning Multiview Items for Recommendation - SIGIR 2020
+MVIN: Learning Multiview Items for Recommendation, SIGIR 2020
