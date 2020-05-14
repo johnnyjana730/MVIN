@@ -5,7 +5,7 @@ import tensorflow as tf
 
 import numpy as np
 from time import time
-from model import KGPH
+from model import MVIN
 from train_util import Early_stop_info, Eval_score_info, Train_info_record_sw_emb
 from metrics import ndcg_at_k, map_at_k, recall_at_k, hit_ratio_at_k, mrr_at_k, precision_at_k
 import pickle
@@ -28,18 +28,21 @@ def train(args, data, trn_info, show_loss, show_topk):
     config.gpu_options.allow_growth = True
 
     with tf.Session(config=config) as sess:
-        model = KGPH(args, n_user, n_entity, n_relation, adj_entity, adj_relation)
+        model = MVIN(args, n_user, n_entity, n_relation, adj_entity, adj_relation)
 
         # Model_parameter = [v for v in tf.global_variables()]
         # for model_variable in Model_parameter:
         #     print("model_variable variable = ", model_variable.name)
 
         sess.run(tf.global_variables_initializer())
+        trn_info.logger.info('Parameters:' + '\n'.join([v.name for v in tf.global_variables()]))
+        
         # stage_wise_var = [v for v in tf.global_variables() if 'Adam' not in v.name and 'adam' not in v.name]
         stage_wise_var = [v for v in tf.global_variables() if 'STWS' in v.name and 'Adam' not in v.name and 'adam' not in v.name]
         # stage_wise_var = [v for v in tf.global_variables() if ('STWS' in v.name or 'agg' in v.name) and 'Adam' not in v.name]
         # stage_wise_var = [v for v in tf.global_variables() if 'agg' not in v.name and 'enti_mlp_matrix' not in v.name 
                             # and 'adam' not in v.name and 'Adam' not in v.name]
+        trn_info.logger.info('SW Parameters:' + '\n'.join([v.name for v in stage_wise_var]))
         for SW_varitable in stage_wise_var:
             print("stage_wise variable = ", SW_varitable.name)
 
@@ -91,10 +94,6 @@ def train(args, data, trn_info, show_loss, show_topk):
                 eval_score_info.test_auc_acc_f1 = auc, acc, f1
 
                 satistic_list = [test_auc_list, test_acc_list, test_f1_list]
-
-                # print('text_auc = ', test_auc_list)
-                # print('text_acc = ', test_acc_list)
-                # print('text_f1 = ', test_f1_list)
 
                 trn_info.update_score(step, eval_score_info)
 

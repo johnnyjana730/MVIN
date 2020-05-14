@@ -1,5 +1,21 @@
 import os
+import sys
 import time
+import logging
+import logging.handlers
+
+def get_logger(logname):
+    logger = logging.getLogger(logname)
+    logger.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('[%(levelname)s]  %(message)s')
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+    fh = logging.handlers.RotatingFileHandler(logname, mode='w')
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
+    return logger
+
 
 class Early_stop_info:
     def __init__(self,args,show_topk):
@@ -20,19 +36,18 @@ class Early_stop_info:
             if self.save_final_model == True:
                 model.save_pretrain_emb_fuc(sess, saver)
 
-                with open(f"{self.args.path.satistic}_sw_para_{self.args.save_model_name}"+ "epoch_" + str(self.args.epoch) + '_sw_stage' 
-                        + str(self.args.SW_stage) + '_confid_auc', 'w') as output:
-                    for row in satistic_list[0]:
-                        output.write(str(row) + '\n')
-                with open(f"{self.args.path.satistic}_sw_para_{self.args.save_model_name}"+ "epoch_" + str(self.args.epoch) + '_sw_stage' 
-                        + str(self.args.SW_stage) + '_confid_acc', 'w') as output:
-                    for row in satistic_list[1]:
-                        output.write(str(row) + '\n')
-                with open(f"{self.args.path.satistic}_sw_para_{self.args.save_model_name}"+ "epoch_" + str(self.args.epoch) + '_sw_stage' 
-                        + str(self.args.SW_stage) + '_confid_f1', 'w') as output:
-                    for row in satistic_list[2]:
-                        output.write(str(row) + '\n')
-
+                # with open(f"{self.args.path.satistic}_sw_para_{self.args.save_model_name}"+ "epoch_" + str(self.args.epoch) + '_sw_stage' 
+                #         + str(self.args.SW_stage) + '_confid_auc', 'w') as output:
+                #     for row in satistic_list[0]:
+                #         output.write(str(row) + '')
+                # with open(f"{self.args.path.satistic}_sw_para_{self.args.save_model_name}"+ "epoch_" + str(self.args.epoch) + '_sw_stage' 
+                #         + str(self.args.SW_stage) + '_confid_acc', 'w') as output:
+                #     for row in satistic_list[1]:
+                #         output.write(str(row) + '')
+                # with open(f"{self.args.path.satistic}_sw_para_{self.args.save_model_name}"+ "epoch_" + str(self.args.epoch) + '_sw_stage' 
+                #         + str(self.args.SW_stage) + '_confid_f1', 'w') as output:
+                #     for row in satistic_list[2]:
+                #         output.write(str(row) + '')
                 # print("Model all parameter saved.")
         if epoch + 1 > self.tolerance:
             if f1_or_ndcg > self.best_eval_f1_ndcg:
@@ -64,7 +79,6 @@ class Eval_score_info:
     def eval_st_score(self):
         return self.eval_auc_acc_f1[0]
 
-
 class Train_info_record_sw_emb:
     def __init__(self,args):
         # cur_tim = time.strftime("%Y%m%d-%H%M%S")
@@ -86,6 +100,11 @@ class Train_info_record_sw_emb:
         self.sw_early_stop = 0
         self.counter = 1
 
+        self.logger = get_logger(self.folder_path)
+        self.logger.info(args)
+
+        self.logger_best = get_logger(self.folder_path_best)
+        # self.self.logger_best.info(args)
     # def update_cur_train_info(self,args):    
 
     #     self.hop = args.h_hop
@@ -110,16 +129,16 @@ class Train_info_record_sw_emb:
     #     self.max_test_ndcg = 0
 
     #     train_log = open(self.folder_path, 'a')
-    #     train_log.write(f"lr = {args.lr}, h_hop = {args.h_hop}, p_hop = {args.p_hop},  n_mix_hop = {args.n_mix_hop}, np.epoch = {args.epoch}, nb_size = {str(args.neighbor_sample_size)}, set_memory = {str(args.n_memory)}\n")
-    #     train_log.write(f"dataset = {args.dataset}, abla = {args.ablation}, l2_wt = {args.l2_weight}, l2_a_wt = {args.l2_agg_weight}, dim = {args.dim}, batch_size = {args.batch_size} \n")
+    #     self.logger.info(f"lr = {args.lr}, h_hop = {args.h_hop}, p_hop = {args.p_hop},  n_mix_hop = {args.n_mix_hop}, np.epoch = {args.epoch}, nb_size = {str(args.neighbor_sample_size)}, set_memory = {str(args.n_memory)}")
+    #     self.logger.info(f"dataset = {args.dataset}, abla = {args.ablation}, l2_wt = {args.l2_weight}, l2_a_wt = {args.l2_agg_weight}, dim = {args.dim}, batch_size = {args.batch_size} ")
     #     cur_tim = time.strftime("%Y%m%d-%H%M%S")  
-    #     train_log.write(f"pretrain_emb = {args.load_pretrain_emb}, tolerance = {args.tolerance}, early_decrease_lr = {args.early_decrease_lr}\n")
+    #     self.logger.info(f"pretrain_emb = {args.load_pretrain_emb}, tolerance = {args.tolerance}, early_decrease_lr = {args.early_decrease_lr}")
     #     train_log.close()
     #     train_log = open(self.folder_path_best, 'a')
-    #     train_log.write(f"lr = {args.lr}, h_hop = {args.h_hop}, p_hop = {args.p_hop},  n_mix_hop = {args.n_mix_hop}, np.epoch = {args.epoch}, nb_size = {str(args.neighbor_sample_size)}, set_memory = {str(args.n_memory)}\n")
-    #     train_log.write(f"dataset = {args.dataset}, abla = {args.ablation}, l2_wt = {args.l2_weight},  l2_a_wt = {args.l2_agg_weight}, dim = {args.dim}, batch_size = {args.batch_size} \n")
+    #     self.logger.info(f"lr = {args.lr}, h_hop = {args.h_hop}, p_hop = {args.p_hop},  n_mix_hop = {args.n_mix_hop}, np.epoch = {args.epoch}, nb_size = {str(args.neighbor_sample_size)}, set_memory = {str(args.n_memory)}")
+    #     self.logger.info(f"dataset = {args.dataset}, abla = {args.ablation}, l2_wt = {args.l2_weight},  l2_a_wt = {args.l2_agg_weight}, dim = {args.dim}, batch_size = {args.batch_size} ")
     #     cur_tim = time.strftime("%Y%m%d-%H%M%S")
-    #     train_log.write(f"pretrain_emb = {args.load_pretrain_emb}, tolerance = {args.tolerance}, early_decrease_lr = {args.early_decrease_lr}\n")
+    #     self.logger.info(f"pretrain_emb = {args.load_pretrain_emb}, tolerance = {args.tolerance}, early_decrease_lr = {args.early_decrease_lr}")
     #     train_log.close()
 
     def update_cur_train_info(self,args, record_info):    
@@ -144,21 +163,21 @@ class Train_info_record_sw_emb:
 
         self.max_eval_ndcg = 0
         self.max_test_ndcg = 0
+        # self.logger.info(args)
+        # train_log = open(self.folder_path, 'a')
+        # self.logger.info(f"lr = {args.lr}, h_hop = {args.h_hop}, p_hop = {args.p_hop},  n_mix_hop = {args.n_mix_hop}, np.epoch = {args.epoch}, nb_size = {str(args.neighbor_sample_size)}, set_memory = {str(args.n_memory)}")
+        # self.logger.info(f"dataset = {args.dataset}, abla = {args.ablation}, l2_wt = {args.l2_weight}, l2_a_wt = {args.l2_agg_weight}, dim = {args.dim}, batch_size = {args.batch_size}")
+        # cur_tim = time.strftime("%Y%m%d-%H%M%S")  
+        # self.logger.info(f"pretrain_emb = {args.load_pretrain_emb}, tolerance = {args.tolerance}, early_decrease_lr = {args.early_decrease_lr}")
+        # train_log.close()
 
-        train_log = open(self.folder_path, 'a')
-        train_log.write(f"lr = {args.lr}, h_hop = {args.h_hop}, p_hop = {args.p_hop},  n_mix_hop = {args.n_mix_hop}, np.epoch = {args.epoch}, nb_size = {str(args.neighbor_sample_size)}, set_memory = {str(args.n_memory)}\n")
-        train_log.write(f"dataset = {args.dataset}, abla = {args.ablation}, l2_wt = {args.l2_weight}, l2_a_wt = {args.l2_agg_weight}, dim = {args.dim}, batch_size = {args.batch_size} \n")
-        cur_tim = time.strftime("%Y%m%d-%H%M%S")  
-        train_log.write(f"pretrain_emb = {args.load_pretrain_emb}, tolerance = {args.tolerance}, early_decrease_lr = {args.early_decrease_lr}\n")
-        train_log.close()
-
-        if record_info:
-            train_log = open(self.folder_path_best, 'a')
-            train_log.write(f"lr = {args.lr}, h_hop = {args.h_hop}, p_hop = {args.p_hop},  n_mix_hop = {args.n_mix_hop}, np.epoch = {args.epoch}, nb_size = {str(args.neighbor_sample_size)}, set_memory = {str(args.n_memory)}\n")
-            train_log.write(f"dataset = {args.dataset}, abla = {args.ablation}, l2_wt = {args.l2_weight},  l2_a_wt = {args.l2_agg_weight}, dim = {args.dim}, batch_size = {args.batch_size} \n")
-            cur_tim = time.strftime("%Y%m%d-%H%M%S")
-            train_log.write(f"pretrain_emb = {args.load_pretrain_emb}, tolerance = {args.tolerance}, early_decrease_lr = {args.early_decrease_lr}\n")
-            train_log.close()
+        # if record_info:
+            # train_log = open(self.folder_path_best, 'a')
+            # self.logger.info(f"lr = {args.lr}, h_hop = {args.h_hop}, p_hop = {args.p_hop},  n_mix_hop = {args.n_mix_hop}, np.epoch = {args.epoch}, nb_size = {str(args.neighbor_sample_size)}, set_memory = {str(args.n_memory)}")
+            # self.logger.info(f"dataset = {args.dataset}, abla = {args.ablation}, l2_wt = {args.l2_weight},  l2_a_wt = {args.l2_agg_weight}, dim = {args.dim}, batch_size = {args.batch_size}")
+            # cur_tim = time.strftime("%Y%m%d-%H%M%S")
+            # self.logger.info(f"pretrain_emb = {args.load_pretrain_emb}, tolerance = {args.tolerance}, early_decrease_lr = {args.early_decrease_lr}")
+            # train_log.close()
 
 
     def update_score(self, step, eval_score_info):
@@ -168,10 +187,10 @@ class Train_info_record_sw_emb:
 
         print('epoch %d  train auc: %.4f acc: %.4f f1: %.4f eval auc: %.4f acc: %.4f f1: %.4f test auc: %.4f acc: %.4f f1: %.4f'
                   % (step, train_auc, train_acc, train_f1, eval_auc, eval_acc, eval_f1, test_auc, test_acc, test_f1), end = '\r')
-        train_log = open(self.folder_path, 'a')
-        train_log.write('epoch %d  train auc: %.4f acc: %.4f f1: %.4f  eval auc: %.4f acc: %.4f f1: %.4f  test auc: %.4f acc: %.4f f1: %.4f \n'
+        # train_log = open(self.folder_path, 'a')
+        self.logger.info('epoch %d  train auc: %.4f acc: %.4f f1: %.4f  eval auc: %.4f acc: %.4f f1: %.4f  test auc: %.4f acc: %.4f f1: %.4f'
                   % (step, train_auc, train_acc, train_f1, eval_auc, eval_acc, eval_f1, test_auc, test_acc, test_f1))
-        train_log.close()
+        # train_log.close()
 
         if train_auc > self.max_train_auc:
             self.max_train_auc =  train_auc
@@ -194,12 +213,12 @@ class Train_info_record_sw_emb:
 
     def update_recall(self, step, n_precision_eval, n_recall_eval, n_ndcg_eval, n_precision_test, n_recall_test, n_ndcg_test):
 
-        train_log = open(self.folder_path, 'a')
-        train_log.write(f"step = {step}, eval ndcg = {n_ndcg_eval} ")
-        train_log.write(f"step = {step}, test ndcg = {n_ndcg_test} \n")
-        train_log.write(f"step = {step}, eval recall = {n_recall_eval} ")
-        train_log.write(f"step = {step}, test recall = {n_recall_test} \n")
-        train_log.close()
+        # train_log = open(self.folder_path, 'a')
+        self.logger.info(f"step = {step}, eval ndcg = {n_ndcg_eval} ")
+        self.logger.info(f"step = {step}, test ndcg = {n_ndcg_test}")
+        self.logger.info(f"step = {step}, eval recall = {n_recall_eval} ")
+        self.logger.info(f"step = {step}, test recall = {n_recall_test}")
+        # train_log.close()
 
         if n_ndcg_eval[2] >  self.max_eval_ndcg:
             self.max_eval_ndcg = n_ndcg_eval[2]
@@ -209,14 +228,13 @@ class Train_info_record_sw_emb:
 
     def train_over(self,tags = 0):
         
-        train_log = open(self.folder_path, 'a')
-        train_log.write("*"*100)
-        train_log.write("\n")
+        # train_log = open(self.folder_path, 'a')
+        self.logger.info("*"*100)
 
         print('best_score  max_train auc: %.4f acc: %.4f max_f1: %.4f  max_eval auc: %.4f acc: %.4f max_f1: %.4f max_test auc: %.4f acc: %.4f max_f1: %.4f'
                   % (self.max_train_auc, self.max_train_acc, self.max_train_f1, self.max_eval_auc, self.max_eval_acc, self.max_eval_f1, self.max_test_auc, self.max_test_acc, self.max_test_f1))
         # train_log = open(self.folder_path_best, 'a')
-        # train_log.write('best_score max_eval auc: %.4f acc: %.4f max_f1: %.4f max_test auc: %.4f acc: %.4f max_f1: %.4f \n'
+        # self.logger.info('best_score max_eval auc: %.4f acc: %.4f max_f1: %.4f max_test auc: %.4f acc: %.4f max_f1: %.4f '
         #            % (self.max_eval_auc, self.max_eval_acc, self.max_eval_f1, self.max_test_auc, self.max_test_acc, self.max_test_f1))
         # train_log.close()
 
@@ -258,12 +276,12 @@ class Train_info_record_sw_emb:
             emb_score_recall[tr] = [round(i/self.counter, 6)  for i in self.emb_score_recall[tr]]
 
         if record_info == True:
-            train_log = open(self.folder_path_best, 'a')
-            train_log.write(f"no     auc = {emb_score_auc[0]}, acc = {emb_score_acc[0]}, f1 = {emb_score_f1[0]} \n")
+            # train_log = open(self.folder_path_best, 'a')
+            self.logger_best.info(f"no     auc = {emb_score_auc[0]}, acc = {emb_score_acc[0]}, f1 = {emb_score_f1[0]}")
 
-            # train_log.write(f"no emb auc = {emb_score_auc[2]}, acc = {emb_score_acc[2]}, f1 = {emb_score_f1[2]} \n")
-            train_log.write(f"{'*'*120} \n")
-            train_log.close()
+            # self.logger.info(f"no emb auc = {emb_score_auc[2]}, acc = {emb_score_acc[2]}, f1 = {emb_score_f1[2]}")
+            self.logger_best.info(f"{'*'*120}")
+            # train_log.close()
 
         self.sw_early_stop = 0
 
@@ -297,6 +315,10 @@ class Train_info_record_emb_sw_ndcg:
         self.counter = 1
 
 
+        self.logger = get_logger(self.folder_path)
+        self.logger.info(args)
+
+        self.logger_best = get_logger(self.folder_path_best)
 
     def update_cur_train_info(self,args, record_info):    
 
@@ -324,20 +346,20 @@ class Train_info_record_emb_sw_ndcg:
         self.max_eval_precision = [0 for i in range(7)]
         self.max_test_precision = [0 for i in range(7)]
 
-        train_log = open(self.folder_path, 'a')
-        train_log.write(f"lr = {args.lr}, h_hop = {args.h_hop}, p_hop = {args.p_hop},  n_mix_hop = {args.n_mix_hop}, np.epoch = {args.epoch}, nb_size = {str(args.neighbor_sample_size)}, set_memory = {str(args.n_memory)}\n")
-        train_log.write(f"dataset = {args.dataset}, abla = {args.ablation}, l2_wt = {args.l2_weight}, l2_a_wt = {args.l2_agg_weight}, dim = {args.dim}, batch_size = {args.batch_size} \n")
-        cur_tim = time.strftime("%Y%m%d-%H%M%S")  
-        train_log.write(f"pretrain_emb = {args.load_pretrain_emb}, tolerance = {args.tolerance}, early_decrease_lr = {args.early_decrease_lr}\n")
-        train_log.close()
+        # train_log = open(self.folder_path, 'a')
+        # self.logger.info(f"lr = {args.lr}, h_hop = {args.h_hop}, p_hop = {args.p_hop},  n_mix_hop = {args.n_mix_hop}, np.epoch = {args.epoch}, nb_size = {str(args.neighbor_sample_size)}, set_memory = {str(args.n_memory)}")
+        # self.logger.info(f"dataset = {args.dataset}, abla = {args.ablation}, l2_wt = {args.l2_weight}, l2_a_wt = {args.l2_agg_weight}, dim = {args.dim}, batch_size = {args.batch_size}")
+        # cur_tim = time.strftime("%Y%m%d-%H%M%S")  
+        # self.logger.info(f"pretrain_emb = {args.load_pretrain_emb}, tolerance = {args.tolerance}, early_decrease_lr = {args.early_decrease_lr}")
+        # train_log.close()
 
-        if record_info:
-            train_log = open(self.folder_path_best, 'a')
-            train_log.write(f"lr = {args.lr}, h_hop = {args.h_hop}, p_hop = {args.p_hop},  n_mix_hop = {args.n_mix_hop}, np.epoch = {args.epoch}, nb_size = {str(args.neighbor_sample_size)}, set_memory = {str(args.n_memory)}\n")
-            train_log.write(f"dataset = {args.dataset}, abla = {args.ablation}, l2_wt = {args.l2_weight},  l2_a_wt = {args.l2_agg_weight}, dim = {args.dim}, batch_size = {args.batch_size} \n")
-            cur_tim = time.strftime("%Y%m%d-%H%M%S")
-            train_log.write(f"pretrain_emb = {args.load_pretrain_emb}, tolerance = {args.tolerance}, early_decrease_lr = {args.early_decrease_lr}\n")
-            train_log.close()
+        # if record_info:
+            # train_log = open(self.folder_path_best, 'a')
+            # self.logger.info(f"lr = {args.lr}, h_hop = {args.h_hop}, p_hop = {args.p_hop},  n_mix_hop = {args.n_mix_hop}, np.epoch = {args.epoch}, nb_size = {str(args.neighbor_sample_size)}, set_memory = {str(args.n_memory)}")
+            # self.logger.info(f"dataset = {args.dataset}, abla = {args.ablation}, l2_wt = {args.l2_weight},  l2_a_wt = {args.l2_agg_weight}, dim = {args.dim}, batch_size = {args.batch_size}")
+            # cur_tim = time.strftime("%Y%m%d-%H%M%S")
+            # self.logger.info(f"pretrain_emb = {args.load_pretrain_emb}, tolerance = {args.tolerance}, early_decrease_lr = {args.early_decrease_lr}")
+            # train_log.close()
 
     def update_score(self, step, eval_score_info):
         train_ndcg, train_recall, train_precision = eval_score_info.train_ndcg_recall_pecision[0], eval_score_info.train_ndcg_recall_pecision[1], eval_score_info.train_ndcg_recall_pecision[2]
@@ -345,16 +367,16 @@ class Train_info_record_emb_sw_ndcg:
         test_ndcg, test_recall, test_precision =  eval_score_info.test_ndcg_recall_pecision[0], eval_score_info.test_ndcg_recall_pecision[1], eval_score_info.test_ndcg_recall_pecision[2]
 
         print(f"step = {step}, eval ndcg = {eval_ndcg} ")
-        print(f"{step}, test ndcg = {test_ndcg} \n")
+        print(f"{step}, test ndcg = {test_ndcg} ")
         print(f"step = {step}, eval recall = {eval_recall} ")
-        print(f"{step}, test recall = {test_recall} \n")
+        print(f"{step}, test recall = {test_recall}")
 
-        train_log = open(self.folder_path, 'a')
-        train_log.write(f"step = {step}, eval ndcg = {eval_ndcg} ")
-        train_log.write(f"{step}, test ndcg = {test_ndcg} \n")
-        train_log.write(f"step = {step}, eval recall = {eval_recall} ")
-        train_log.write(f"{step}, test recall = {test_recall} \n")
-        train_log.close()
+        # train_log = open(self.folder_path, 'a')
+        self.logger.info(f"step = {step}, eval ndcg = {eval_ndcg} ")
+        self.logger.info(f"{step}, test ndcg = {test_ndcg}")
+        self.logger.info(f"step = {step}, eval recall = {eval_recall} ")
+        self.logger.info(f"{step}, test recall = {test_recall}")
+        # train_log.close()
 
         if eval_recall[2] > self.max_eval_recall[2]:
             self.max_eval_ndcg =  eval_ndcg
@@ -372,26 +394,25 @@ class Train_info_record_emb_sw_ndcg:
 
     def update_recall(self, step,  n_ndcg_eval, n_recall_eval, n_precision_eval, n_ndcg_test, n_recall_test, n_precision_test):
 
-        train_log = open(self.folder_path, 'a')
-        train_log.write(f"step = {step}, eval ndcg = {n_ndcg_eval} ")
-        train_log.write(f"eval recall = {n_recall_eval} \n")
-        train_log.write(f"step = {step}, test ndcg = {n_ndcg_test} ")
-        train_log.write(f"test recall = {n_recall_test} \n")
-        train_log.close()
+        # train_log = open(self.folder_path, 'a')
+        self.logger.info(f"step = {step}, eval ndcg = {n_ndcg_eval} ")
+        self.logger.info(f"eval recall = {n_recall_eval}")
+        self.logger.info(f"step = {step}, test ndcg = {n_ndcg_test} ")
+        self.logger.info(f"test recall = {n_recall_test} ")
+        # train_log.close()
 
     def train_over(self,tags_number = 0):
-        train_log = open(self.folder_path, 'a')
-        train_log.write("*"*100)
-        train_log.write("\n")
+        # train_log = open(self.folder_path, 'a')
+        self.logger.info("*"*100)
 
-        print(f"best_score eval ndcg = {self.max_eval_ndcg}, eval recall = {self.max_eval_recall} \n")
-        print(f"best_score test ndcg = {self.max_test_ndcg}, test recall = {self.max_test_recall} \n")
+        print(f"best_score eval ndcg = {self.max_eval_ndcg}, eval recall = {self.max_eval_recall} ")
+        print(f"best_score test ndcg = {self.max_test_ndcg}, test recall = {self.max_test_recall} ")
 
-        train_log = open(self.folder_path_best, 'a')
+        # train_log = open(self.folder_path_best, 'a')
 
-        train_log.write(f"best_score eval ndcg = {self.max_eval_ndcg}, eval recall = {self.max_eval_recall} \n")
-        train_log.write(f"best_score test ndcg = {self.max_test_ndcg}, test recall = {self.max_test_recall} \n")
-        train_log.close()
+        self.logger.info(f"best_score eval ndcg = {self.max_eval_ndcg}, eval recall = {self.max_eval_recall} ")
+        self.logger.info(f"best_score test ndcg = {self.max_test_ndcg}, test recall = {self.max_test_recall} ")
+        # train_log.close()
 
         if self.load_pretrain_emb == False: tr = 0
         else: tr = 2
@@ -431,10 +452,10 @@ class Train_info_record_emb_sw_ndcg:
             emb_score_recall[tr] = [round(i/self.counter, 6)  for i in self.emb_score_recall[tr]]
 
         if record_info == True:
-            train_log = open(self.folder_path_best, 'a')
-            train_log.write(f"no     ndcg = {emb_score_ndcg[0]}, recall = {emb_score_recall[0]}, precision = {emb_score_precision[0]} \n")
-            train_log.write(f"{'*'*120} \n")
-            train_log.close()
+            # train_log = open(self.folder_path_best, 'a')
+            self.logger_best.info(f"no     ndcg = {emb_score_ndcg[0]}, recall = {emb_score_recall[0]}, precision = {emb_score_precision[0]} ")
+            self.logger_best.info(f"{'*'*120} ")
+            # train_log.close()
 
         self.sw_early_stop = 0
 

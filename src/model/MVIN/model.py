@@ -2,9 +2,8 @@ import tensorflow as tf
 from aggregators import SumAggregator_urh_matrix, ConcatAggregator, NeighborAggregator
 from sklearn.metrics import f1_score, roc_auc_score
 import numpy as np
-# tf.set_random_seed(1)
 
-class KGPH(object):
+class MVIN(object):
     def __init__(self, args, n_user, n_entity, n_relation, adj_entity, adj_relation):
         self._parse_args(args, adj_entity, adj_relation)
         self._build_inputs()
@@ -72,19 +71,19 @@ class KGPH(object):
 
         with tf.variable_scope("user_emb_matrix_STWS"):
             self.user_emb_matrix = tf.get_variable(
-                shape=[n_user, self.dim], initializer=KGPH.get_initializer(), name='user_emb_matrix_STWS')
+                shape=[n_user, self.dim], initializer=MVIN.get_initializer(), name='user_emb_matrix_STWS')
 
         with tf.variable_scope("entity_emb_matrix_STWS"):
             self.entity_emb_matrix = tf.get_variable(
-                shape=[n_entity, self.dim], initializer=KGPH.get_initializer(), name='entity_emb_matrix_STWS')
+                shape=[n_entity, self.dim], initializer=MVIN.get_initializer(), name='entity_emb_matrix_STWS')
 
         with tf.variable_scope("relation_emb_matrix_STWS"):
             self.relation_emb_matrix = tf.get_variable(
-                shape=[n_relation,self.dim], initializer=KGPH.get_initializer(), name='relation_emb_matrix_STWS')
+                shape=[n_relation,self.dim], initializer=MVIN.get_initializer(), name='relation_emb_matrix_STWS')
 
         with tf.variable_scope("relation_emb_KGE_matrix_STWS"):
             self.relation_emb_KGE_matrix = tf.get_variable(
-                shape=[n_relation,self.dim, self.dim], initializer=KGPH.get_initializer(), name='relation_emb_KGE_matrix_STWS')
+                shape=[n_relation,self.dim, self.dim], initializer=MVIN.get_initializer(), name='relation_emb_KGE_matrix_STWS')
 
         self.enti_transfer_matrix_list = []
         self.enti_transfer_bias_list = []
@@ -92,9 +91,9 @@ class KGPH(object):
         for n in range(self.n_mix_hop):
             with tf.variable_scope("enti_mlp_matrix"+str(n)):
                 self.enti_transfer_matrix = tf.get_variable(
-                    shape=[self.dim * (self.h_hop+1), self.dim], initializer=KGPH.get_initializer(), name='transfer_matrix'+str(n))
+                    shape=[self.dim * (self.h_hop+1), self.dim], initializer=MVIN.get_initializer(), name='transfer_matrix'+str(n))
                 self.enti_transfer_bias = tf.get_variable(
-                    shape=[self.dim], initializer=KGPH.get_initializer(), name='transfer_bias'+str(n))
+                    shape=[self.dim], initializer=MVIN.get_initializer(), name='transfer_bias'+str(n))
                 self.enti_transfer_matrix_list.append(self.enti_transfer_matrix)
                 self.enti_transfer_bias_list.append(self.enti_transfer_bias)
 
@@ -102,24 +101,24 @@ class KGPH(object):
             if self.args.PS_O_ft == True: user_mlp_shape = self.p_hop+1
             else: user_mlp_shape = self.p_hop
             self.user_mlp_matrix = tf.get_variable(
-                shape=[self.dim * (user_mlp_shape), self.dim], initializer=KGPH.get_initializer(), name='user_mlp_matrix')
-            self.user_mlp_bias = tf.get_variable(shape=[self.dim], initializer=KGPH.get_initializer()
+                shape=[self.dim * (user_mlp_shape), self.dim], initializer=MVIN.get_initializer(), name='user_mlp_matrix')
+            self.user_mlp_bias = tf.get_variable(shape=[self.dim], initializer=MVIN.get_initializer()
                                                 , name='user_mlp_bias')
         self.transfer_matrix_list = []
         self.transfer_matrix_bias = []
         for n in range(self.n_mix_hop*self.h_hop+1):
             with tf.variable_scope("transfer_agg_matrix"+str(n)):
                 self.transform_matrix = tf.get_variable(name='transfer_agg_matrix'+str(n), shape=[self.dim, self.dim], dtype=tf.float32,
-                                                initializer=KGPH.get_initializer())
+                                                initializer=MVIN.get_initializer())
                 self.transform_bias = tf.get_variable(name='transfer_agg_bias'+str(n), shape=[self.dim], dtype=tf.float32,
-                                                initializer=KGPH.get_initializer())
+                                                initializer=MVIN.get_initializer())
                 self.transfer_matrix_bias.append(self.transform_bias)
                 self.transfer_matrix_list.append(self.transform_matrix)
 
         with tf.variable_scope("h_emb_item_mlp_matrix"):
             self.h_emb_item_mlp_matrix = tf.get_variable(
-                shape=[self.dim * 2, 1], initializer=KGPH.get_initializer(), name='h_emb_item_mlp_matrix')
-            self.h_emb_item_mlp_bias = tf.get_variable(shape=[1], initializer=KGPH.get_initializer()
+                shape=[self.dim * 2, 1], initializer=MVIN.get_initializer(), name='h_emb_item_mlp_matrix')
+            self.h_emb_item_mlp_bias = tf.get_variable(shape=[1], initializer=MVIN.get_initializer()
                                                 , name='h_emb_item_mlp_bias')
 
 
@@ -148,7 +147,7 @@ class KGPH(object):
             item_embeddings, self.aggregators = self.agg_fun(entities, relations, transfer_o)
 
         else:
-            print('KPGH PS and HO')
+            print('MVIN PS and HO')
             user_o, transfer_o = self._key_addressing()
             if self.args.User_orient_kg_eh == False: transfer_o = [tf.nn.embedding_lookup(self.user_emb_matrix, self.user_indices)]
             item_embeddings, self.aggregators = self.agg_fun(entities, relations, transfer_o)
@@ -257,7 +256,7 @@ class KGPH(object):
     def aggregate_delta_whole(self, entities, relations, transfer_o):
         # print('aggregate_delta_whole ===')
         user_query = transfer_o[0]
-        print('KPGH aggregate_delta_whole')
+        print('MVIN aggregate_delta_whole')
         aggregators = []  # store all aggregators
         mix_hop_res = []
 
