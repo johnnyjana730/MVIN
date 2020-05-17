@@ -74,33 +74,7 @@ class Aggregator(object):
             # [batch_size, -1, dim]
             neighbors_aggregated = tf.reduce_mean(neighbor_vectors, axis=2)
 
-        return neighbors_aggregated
-
-class SumAggregator(Aggregator):
-    def __init__(self, save_model_name, batch_size, dim, dropout=0., act=tf.nn.relu, name=None):
-        super(SumAggregator, self).__init__(save_model_name,batch_size, dim, dropout, act, name)
-
-        with tf.variable_scope(self.name+'_wights'):
-            self.weights = tf.get_variable(
-                shape=[self.dim, self.dim], initializer=tf.contrib.layers.xavier_initializer(seed = 1), name='weights')
-        with tf.variable_scope(self.name+'_bias'):
-            self.bias = tf.get_variable(shape=[self.dim], initializer=tf.zeros_initializer(), name='bias')
-
-    def _call(self, self_vectors, neighbor_vectors, neighbor_relations, user_embeddings, masks):
-        # [batch_size, -1, dim]
-        # input()
-        neighbors_agg = self._mix_neighbor_vectors(neighbor_vectors, neighbor_relations, user_embeddings)
-
-        # [-1, dim]
-        output = tf.reshape(self_vectors + neighbors_agg, [-1, self.dim])
-        output = tf.nn.dropout(output, keep_prob=1-self.dropout)
-        output = tf.matmul(output, self.weights) + self.bias
-
-        # [batch_size, -1, dim]
-        output = tf.reshape(output, [neighbor_vectors.shape[0], -1, self.dim])
-
-        return self.act(output)
-        
+        return neighbors_aggregated        
 
 class SumAggregator_urh_matrix(Aggregator):
     def __init__(self, save_model_name, batch_size, dim, dropout=0., act=tf.nn.relu, name=None, User_orient_rela = True):
@@ -125,11 +99,11 @@ class SumAggregator_urh_matrix(Aggregator):
         # [batch_size, -1, dim]
         if self.User_orient_rela == True:
             print('self.User_orient_rela  = ', self.User_orient_rela, '_mix_neighbor_vectors_urh')
-            neighbors_agg = self._mix_neighbor_vectors_urh(self_vectors, user_embeddings, neighbor_vectors, neighbor_relations)
+            neighbors_agg, probs_normalized = self._mix_neighbor_vectors_urh(self_vectors, user_embeddings, neighbor_vectors, neighbor_relations)
         else:
             print('self.User_orient_rela  = ', self.User_orient_rela, '_mix_neighbor_vectors_no_ur')
             neighbors_agg = self._mix_neighbor_vectors_no_ur(self_vectors, user_embeddings, neighbor_vectors, neighbor_relations)
-            
+            probs_normalized = None
         # [-1, dim]
         output = tf.reshape(self_vectors + neighbors_agg, [-1, self.dim])
         output = tf.nn.dropout(output, keep_prob=1-self.dropout)
@@ -139,7 +113,7 @@ class SumAggregator_urh_matrix(Aggregator):
         output = tf.reshape(output, [self.batch_size, -1, self.dim])
 
         # return output
-        return self.act(output)
+        return self.act(output), probs_normalized
 
     def _mix_neighbor_vectors_urh(self, self_vectors, user_embeddings, neighbor_vectors, neighbor_relations):
 
@@ -169,69 +143,11 @@ class SumAggregator_urh_matrix(Aggregator):
         # [batch_size, -1, n_memory]
         neighbors_aggregated = tf.reduce_mean(probs_expanded * neighbor_vectors, axis=2)
 
-        return neighbors_aggregated
-
-
+        return neighbors_aggregated, probs_normalized
 
     def _mix_neighbor_vectors_no_ur(self, self_vectors, user_embeddings, neighbor_vectors, neighbor_relations):
 
         neighbors_aggregated = tf.reduce_mean(neighbor_vectors, axis=2)
 
         return neighbors_aggregated
-
-
-class ConcatAggregator(Aggregator):
-    def __init__(self, save_model_name, batch_size, dim, dropout=0., act=tf.nn.relu, name=None):
-        super(ConcatAggregator, self).__init__(save_model_name, batch_size, dim, dropout, act, name)
-
-        with tf.variable_scope(self.name+'_wights'):
-            self.weights = tf.get_variable(
-                shape=[self.dim * 2, self.dim], initializer=tf.contrib.layers.xavier_initializer(seed = 1), name='weights')
-        with tf.variable_scope(self.name+'_bias'):
-            self.bias = tf.get_variable(shape=[self.dim], initializer=tf.zeros_initializer(), name='bias')
-
-    def _call(self, self_vectors, neighbor_vectors, neighbor_relations, user_embeddings, masks):
-        # [batch_size, -1, dim]
-        neighbors_agg = self._mix_neighbor_vectors(neighbor_vectors, neighbor_relations, user_embeddings)
-
-        # [batch_size, -1, dim * 2]
-        output = tf.concat([self_vectors, neighbors_agg], axis=-1)
-
-        # [-1, dim * 2]
-        output = tf.reshape(output, [-1, self.dim * 2])
-        output = tf.nn.dropout(output, keep_prob=1-self.dropout)
-
-        # [-1, dim]
-        output = tf.matmul(output, self.weights) + self.bias
-
-        # [batch_size, -1, dim]
-        output = tf.reshape(output, [self.batch_size, -1, self.dim])
-
-        return self.act(output)
-
-
-class NeighborAggregator(Aggregator):
-    def __init__(self, save_model_name, batch_size, dim, dropout=0., act=tf.nn.relu, name=None):
-        super(NeighborAggregator, self).__init__(save_model_name, batch_size, dim, dropout, act, name)
-
-        with tf.variable_scope(self.name):
-            self.weights = tf.get_variable(
-                shape=[self.dim, self.dim], initializer=tf.contrib.layers.xavier_initializer(seed = 1), name='weights')
-        with tf.variable_scope(self.name+'_bias'):
-            self.bias = tf.get_variable(shape=[self.dim], initializer=tf.zeros_initializer(), name='bias')
-
-    def _call(self, self_vectors, neighbor_vectors, neighbor_relations, user_embeddings, masks):
-        # [batch_size, -1, dim]
-        neighbors_agg = self._mix_neighbor_vectors(neighbor_vectors, neighbor_relations, user_embeddings)
-
-        # [-1, dim]
-        output = tf.reshape(neighbors_agg, [-1, self.dim])
-        output = tf.nn.dropout(output, keep_prob=1-self.dropout)
-        output = tf.matmul(output, self.weights) + self.bias
-
-        # [batch_size, -1, dim]
-        output = tf.reshape(output, [self.batch_size, -1, self.dim])
-
-        return self.act(output)
-
 

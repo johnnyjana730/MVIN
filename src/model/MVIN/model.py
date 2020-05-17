@@ -1,5 +1,5 @@
 import tensorflow as tf
-from aggregators import SumAggregator_urh_matrix, ConcatAggregator, NeighborAggregator
+from aggregators import SumAggregator_urh_matrix
 from sklearn.metrics import f1_score, roc_auc_score
 import numpy as np
 
@@ -287,15 +287,18 @@ class MVIN(object):
                 aggregator = self.aggregator_class(self.save_model_name,self.batch_size, self.dim, name = str(i)+'_'+str(n), User_orient_rela = self.User_orient_rela)
                 aggregators.append(aggregator)
                 entity_vectors_next_iter = []
+
+                if i == 0: self.importance_list = []
                 for hop in range(self.h_hop*self.n_mix_hop-(self.h_hop*n+i)):
                     shape = [self.batch_size, entity_vectors[hop].shape[1], self.n_neighbor, self.dim]
                     shape_r = [self.batch_size, entity_vectors[hop].shape[1], self.n_neighbor, self.dim]
                     print('relation_vectors[hop = ', relation_vectors[hop].shape)
-                    vector = aggregator(self_vectors=entity_vectors[hop],
+                    vector, probs_normalized = aggregator(self_vectors=entity_vectors[hop],
                                         neighbor_vectors=tf.reshape(entity_vectors[hop + 1], shape),
                                         neighbor_relations=tf.reshape(relation_vectors[hop], shape_r),
                                         user_embeddings=user_query,
                                         masks=None)
+                    if i == 0: self.importance_list.append(probs_normalized)
                     entity_vectors_next_iter.append(vector)
                 entity_vectors = entity_vectors_next_iter
                 mix_hop_tmp.append(entity_vectors)
@@ -310,6 +313,11 @@ class MVIN(object):
 
         mix_hop_res = tf.reshape(entity_vectors[0], [self.batch_size, self.dim])
 
+        self.importance_list_0 = self.importance_list[0]
+        if len(self.importance_list) > 1:
+            self.importance_list_1 = self.importance_list[1]
+        else:
+            self.importance_list_1 = 0
         return mix_hop_res, aggregators
 
 
@@ -413,5 +421,12 @@ class MVIN(object):
         f1 = f1_score(y_true=labels, y_pred=scores)
         acc = np.mean(np.equal(scores, labels))
         return auc, acc, f1
+
+    def eval_case_study(self, sess, feed_dict):
+        user_indices, labels, item_indices, entities_data, relations_data, importance_list_0, importance_list_1 = sess.run([self.user_indices, self.labels, self.item_indices,  
+            self.entities_data, self.relations_data, self.importance_list_0, self.importance_list_1], feed_dict)
+
+        return user_indices, labels, item_indices, entities_data, relations_data, importance_list_0, importance_list_1
+
     def get_scores(self, sess, feed_dict):
         return sess.run([self.item_indices, self.scores_normalized], feed_dict)

@@ -17,12 +17,18 @@ from functools import partial
 
 def load_data(args):
     n_user, n_item, train_data, eval_data, test_data, user_history_dict, item_set_most_pop = load_rating(args)
+    
+    if args.attention_cast_st == True and args.dataset[:6] == "amazon":
+        entity_index_2_name, rela_index_2_name = load_enti_rela_name(args)
+    else:
+        entity_index_2_name, rela_index_2_name = None, None
+
     kg, n_entity, n_relation, adj_entity, adj_relation, user_path, user_path_top_k = load_kg(args, train_data)
     print('data loaded.')
     user_triplet_set = get_user_triplet_set(args, kg, user_history_dict)
     all_user_entity_count = get_all_user_entity_count(args,train_data, kg, adj_entity, adj_relation, hop=args.h_hop)
     return n_user, n_item, n_entity, n_relation, train_data, eval_data, test_data, adj_entity, adj_relation, user_triplet_set, \
-            user_path, user_path_top_k, item_set_most_pop
+            user_path, user_path_top_k, item_set_most_pop, user_history_dict, entity_index_2_name, rela_index_2_name
 
 def load_rating(args):
     print('reading rating file ...')
@@ -107,6 +113,97 @@ def load_rating(args):
         #     u_counter[user].add(item)
         #     i_counter[item].add(user)
     return n_user, n_item, train_data, eval_data, test_data, user_history_dict, item_set_most_pop
+
+
+def load_enti_rela_name(args):
+    rating_file = args.path.data + 'meta_Books.json'
+    if os.path.exists(rating_file) == False:
+        return None, None
+
+    if os.path.exists(f"{args.path.misc}new_meta_Books_dict.pickle") == False:
+        new_meta_Books_dict = {}
+        rating_file = args.path.data + 'meta_Books.json'
+        with open(rating_file, 'r') as f:
+            d = f.readlines()
+            for line_json in d:
+                mb_dict = json.loads(line_json)
+                # print('mb_dict = ', mb_dict)
+                if str(mb_dict['asin']) not in new_meta_Books_dict:
+                    new_meta_Books_dict[str(mb_dict['asin'])] = {}
+                try:
+                    mb_dict_sp = mb_dict['title'].split('(')
+                    new_meta_Books_dict[str(mb_dict['asin'])] = mb_dict_sp[0]
+                    # new_meta_Books_dict[str(mb_dict['asin'])]['title'] = mb_dict['title']
+                    # new_meta_Books_dict[str(mb_dict['asin'])]['description'] = mb_dict['description']
+                except:
+                    pass
+                # print(new_meta_Books_dict)
+                # input()
+        with open(f"{args.path.misc}new_meta_Books_dict.pickle",'wb') as f:
+            pickle.dump(new_meta_Books_dict, f)
+    else:
+        print('load_random_adj')
+        with open(f"{args.path.misc}new_meta_Books_dict.pickle",'rb') as f:
+            new_meta_Books_dict = pickle.load(f)
+
+
+    rating_file = args.path.data + 'ab2fb'
+    fp = open(rating_file + '.txt', "r")
+    freebase_2_entity = {}
+    for line in iter(fp):
+        line_tr = line.replace('\n', '').split('\t')
+        # print('line_tr = ', line_tr)
+        freebase_2_entity[line_tr[-1]] = line_tr[0]
+    # print(freebase_2_entity)
+    # input()
+    fp.close()
+
+    rating_file = args.path.data + 'entity_list'
+    fp = open(rating_file + '.txt', "r")
+    index_2_freebase = {}
+    index_2_entity = {}
+    for line in iter(fp):
+        line_tr = line.replace('\n', '').split(' ')
+        index_2_freebase[line_tr[-1]]  =  "".join(line_tr[:-1])
+        if "".join(line_tr[:-1]) in new_meta_Books_dict:
+            # print('find 1 = ', new_meta_Books_dict["".join(line_tr[:-1])])
+            index_2_entity[line_tr[-1]] = new_meta_Books_dict["".join(line_tr[:-1])]
+        else:
+            index_2_entity[line_tr[-1]] = "".join(line_tr[:-1])
+    fp.close()
+
+    # case_st
+    rating_file = args.path.data + 'item_list'
+    fp = open(rating_file + '.txt', "r")
+    for line in iter(fp):
+        line_tr = line.replace('\n', '').split(' ')
+        if len(line_tr) > 2:
+            if line_tr[0] in new_meta_Books_dict:
+                # print('find 2 = ', new_meta_Books_dict[line_tr[0]])
+                index_2_entity[line_tr[1]] = new_meta_Books_dict[line_tr[0]]
+            else:
+                index_2_entity[line_tr[1]] = line_tr[0]
+        else:
+            pass
+            # print('line_tr = ', line_tr)
+    fp.close()
+
+    rating_file = args.path.data + 'relation_list'
+    fp = open(rating_file + '.txt', "r")
+    rela_2_name = {}
+    for line in iter(fp):
+        # print(line.replace('http://rdf.freebase.com/ns/',''))
+        line_tr = line.replace('http://rdf.freebase.com/ns/','')
+        line_tr = line_tr.replace('http://www.w3.org/1999/02/22-rdf-','')
+        line_tr = line_tr.replace('http://www.w3.org/2000/01/rdf-','')
+        line_tr = line_tr.replace('\n', '').split(' ')
+
+        # if len(line_tr) != 2:
+        #     print("".join(line_tr[:-1]), line_tr[-1])
+        rela_2_name[line_tr[-1]]  = " ".join(line_tr[:-1])
+    fp.close()
+
+    return index_2_entity, rela_2_name
 
 def get_all_user_entity_count(args,train_data, kg, adj_entity, adj_relation, hop=0):
     # item_pool = set(train_data[:, 1].tolist())

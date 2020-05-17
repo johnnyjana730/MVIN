@@ -12,13 +12,13 @@ neighbor_sample_size=8
 n_memory=16
 dim=16
 batch_size=1024
-l2_weight=2e-7
-l2_agg_weight=2e-7
-lr=5e-3
+l2_weight=1e-7
+l2_agg_weight=1e-7
+lr=4.5e-3
 ablation='all'
 
 h_hop=2
-p_hop=1
+p_hop=2
 n_mix_hop=1
 
 tolerance=6

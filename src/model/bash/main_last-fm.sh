@@ -16,7 +16,7 @@ lr=4e-3
 ablation='all'
 
 h_hop=2
-p_hop=1
+p_hop=2
 n_mix_hop=1
 
 tolerance=6

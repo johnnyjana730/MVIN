@@ -53,6 +53,11 @@ def parse_args():
 	parser.add_argument('--PS_only', type=int, default=0, help='size of training dataset')
 	parser.add_argument('--HO_only', type=int, default=0, help='size of training dataset')
 
+	parser.add_argument('--attention_cast_st', type=int, default=0, help='attention cast study')
+
 	args = parser.parse_args()
+
 	args.top_k = (args.top_k == 1)
+	args.attention_cast_st = (args.attention_cast_st == 1)
+
 	return args

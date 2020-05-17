@@ -5,11 +5,12 @@ class Path:
         self.data = f'../../../data/{args.dataset}/'
         self.misc = f'../../../misc/{args.dataset}/'
         self.emb = f'../../../misc/{args.dataset}/emb/'
+        self.case_st = f'../../../case_st/{args.dataset}/'
         # self.satistic = f'../../../confid_abla/{args.dataset}/'
         self.output = f'../../../output/MVIN/{args.dataset}/MVIN_p0{args.p_hop}_h_{args.h_hop}/no_sw'
 
         if args.abla_exp == True:
-            self.output = f'../../../output/MVIN/{args.dataset}/abla_exp_no_sw/'
+            self.output = f'../../../output/MVIN/{args.dataset}/abla_exp/'
         # elif args.wide_deep == False: 
         #     self.output = f'../../../output/MVIN/{args.dataset}/MVIN_p0{args.p_hop}_h_{args.h_hop}/no_sw/cnn'
 
@@ -26,8 +27,8 @@ class Path:
         self.check_dir(f'../../../misc/')
         self.check_dir(self.misc)
         self.check_dir(self.emb)
-        # self.check_dir(f'../../../confid_abla/')
-        # self.check_dir(self.satistic)
+        self.check_dir(f'../../../case_st/')
+        self.check_dir(self.case_st)
         self.check_dir(self.output)
 
     def check_dir(self, p):
@@ -39,11 +40,12 @@ class Path_SW:
         self.data = f'../../../data/{args.dataset}/'
         self.misc = f'../../../misc/{args.dataset}/'
         self.emb = f'../../../misc/{args.dataset}/emb/'
+        self.case_st = f'../../../case_st/{args.dataset}/'
         # self.satistic = f'../../../confid_abla/{args.dataset}/'
         self.output = f'../../../output/MVIN/{args.dataset}/MVIN_p0{args.p_hop}_h_{args.h_hop}/sw/'
 
         if args.abla_exp == True:
-            self.output = f'../../../output/MVIN/{args.dataset}/abla_exp_no_sw/'
+            self.output = f'../../../output/MVIN/{args.dataset}/abla_exp/'
         # elif args.wide_deep == False: 
         #     self.output = f'../../../output/MVIN/{args.dataset}/MVIN_p0{args.p_hop}_h_{args.h_hop}/no_sw/cnn'
 
@@ -59,8 +61,8 @@ class Path_SW:
         self.check_dir(f'../../../misc/')
         self.check_dir(self.misc)
         self.check_dir(self.emb)
-        # self.check_dir(f'../../../confid_abla/')
-        # self.check_dir(self.satistic)
+        self.check_dir(f'../../../case_st/')
+        self.check_dir(self.case_st)
         self.check_dir(self.output)
 
     def check_dir(self, p):

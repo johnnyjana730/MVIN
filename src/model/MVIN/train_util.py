@@ -58,7 +58,7 @@ class Early_stop_info:
                 training_time = time.time() - self.training_start_time
                 print("EarlyStopping!")
                 print(f"Total training time {training_time:.2f}")
-                return True
+                return 'EarlyStopping'
 
 class Eval_score_info:
     def __init__(self):
