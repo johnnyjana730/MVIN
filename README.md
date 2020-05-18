@@ -38,7 +38,7 @@ The code has been tested running under Python 3.6.5. The required packages are a
 $ cd graph-stage
 $ conda deactivate
 $ conda create -f requirements.yml
-$ conda activate graph-stage
+$ conda activate MVIN
 ```
 
 ## Example to Run the Codes
