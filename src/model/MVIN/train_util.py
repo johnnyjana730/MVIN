@@ -234,8 +234,8 @@ class Train_info_record_sw_emb:
         print('best_score  max_train auc: %.4f acc: %.4f max_f1: %.4f  max_eval auc: %.4f acc: %.4f max_f1: %.4f max_test auc: %.4f acc: %.4f max_f1: %.4f'
                   % (self.max_train_auc, self.max_train_acc, self.max_train_f1, self.max_eval_auc, self.max_eval_acc, self.max_eval_f1, self.max_test_auc, self.max_test_acc, self.max_test_f1))
         # train_log = open(self.folder_path_best, 'a')
-        # self.logger_best.info('best_score max_eval auc: %.4f acc: %.4f max_f1: %.4f max_test auc: %.4f acc: %.4f max_f1: %.4f '
-                   # % (self.max_eval_auc, self.max_eval_acc, self.max_eval_f1, self.max_test_auc, self.max_test_acc, self.max_test_f1))
+        self.logger_best.info('best_score max_eval auc: %.4f acc: %.4f max_f1: %.4f max_test auc: %.4f acc: %.4f max_f1: %.4f '
+                   % (self.max_eval_auc, self.max_eval_acc, self.max_eval_f1, self.max_test_auc, self.max_test_acc, self.max_test_f1))
         # train_log.close()
 
         tr = 0

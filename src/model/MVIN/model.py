@@ -136,6 +136,9 @@ class MVIN(object):
         # [batch_size, dim]
         entities, relations = self.get_neighbors(self.item_indices)
 
+        self.entities_data = entities
+        self.relations_data = relations
+
         if self.args.PS_only == True:
             user_o, transfer_o = self._key_addressing()
             item_embeddings = tf.nn.embedding_lookup(self.entity_emb_matrix, self.item_indices)
@@ -425,7 +428,16 @@ class MVIN(object):
     def eval_case_study(self, sess, feed_dict):
         user_indices, labels, item_indices, entities_data, relations_data, importance_list_0, importance_list_1 = sess.run([self.user_indices, self.labels, self.item_indices,  
             self.entities_data, self.relations_data, self.importance_list_0, self.importance_list_1], feed_dict)
-
+        # print('user_indices = ', user_indices)
+        # print('labels = ', labels)
+        # input()
+        # print('item_indices = ', item_indices)
+        # print('entities_data = ', entities_data)
+        # print('relations_data = ', relations_data)
+        # input()
+        # print('importance_list_0 = ', importance_list_0)
+        # print('importance_list_1 = ', importance_list_1)
+        # input()
         return user_indices, labels, item_indices, entities_data, relations_data, importance_list_0, importance_list_1
 
     def get_scores(self, sess, feed_dict):

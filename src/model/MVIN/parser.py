@@ -1,4 +1,5 @@
 import argparse
+from parameter_ablation import parameter_env
 
 def parse_args():
 
@@ -56,6 +57,7 @@ def parse_args():
 	parser.add_argument('--attention_cast_st', type=int, default=0, help='attention cast study')
 
 	args = parser.parse_args()
+	args = parameter_env(args)
 
 	args.top_k = (args.top_k == 1)
 	args.attention_cast_st = (args.attention_cast_st == 1)

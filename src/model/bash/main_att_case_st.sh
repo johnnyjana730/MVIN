@@ -51,25 +51,25 @@ export PYTHONPATH="."
 
 # ****************************************************
 
-dataset="MovieLens-1M"
-aggregator="sum"
-n_epochs=20
-neighbor_sample_size=8
-n_memory=32
-dim=16
-batch_size=1024
-l2_weight=1e-7
-l2_agg_weight=1e-7
-lr=5e-3
-ablation='all'
+# dataset="MovieLens-1M"
+# aggregator="sum"
+# n_epochs=20
+# neighbor_sample_size=8
+# n_memory=32
+# dim=16
+# batch_size=1024
+# l2_weight=1e-7
+# l2_agg_weight=1e-7
+# lr=5e-3
+# ablation='all'
 
-h_hop=2
-p_hop=2
-n_mix_hop=1
+# h_hop=2
+# p_hop=1
+# n_mix_hop=1
 
-tolerance=6
-early_decrease_lr=1
-early_stop=2
+# tolerance=6
+# early_decrease_lr=1
+# early_stop=2
 
 # ****************************************************
 
@@ -81,7 +81,7 @@ echo ${CUDA_VISIBLE_DEVICES}
 
 abla_exp=1
 
-log_name=${log_name}_p0${p_hop}_h${h_hop}_n_mix${n_mix_hop}_nb_${neighbor_sample_size}_case_st
+log_name=${log_name}_p0${p_hop}_h${h_hop}_n_mix${n_mix_hop}_nb_${neighbor_sample_size}_case_st_db
 save_model_name=${log_name}
 abla_list=('all' 'no_kg_eh_uo')
 # abla_list=('no_kg_eh_uo')

@@ -11,14 +11,14 @@ n_epochs=20
 neighbor_sample_size=8
 n_memory=16
 dim=16
-batch_size=1024
+batch_size=512
 l2_weight=1e-7
 l2_agg_weight=1e-7
-lr=4.5e-3
+lr=5.5e-3
 ablation='all'
 
 h_hop=2
-p_hop=2
+p_hop=1
 n_mix_hop=1
 
 tolerance=6
@@ -33,7 +33,7 @@ DIM_SIZE=(16)
 for DIM_SIZE in ${DIM_SIZE[@]}
 do
 	dim=$DIM_SIZE
-	log_nameaaa=${log_name}_p0${p_hop}_h${h_hop}_n_mix${n_mix_hop}_nb_${neighbor_sample_size}_l2_${l2_weight}_ag_${l2_agg_weight}_dim_${dim}
+	log_nameaaa=${log_name}_p0${p_hop}_h${h_hop}_n_mix${n_mix_hop}_ba_${batch_size}_nb_${neighbor_sample_size}_l2_${l2_weight}_ag_${l2_agg_weight}_dim_${dim}
 	save_model_name=${log_nameaaa}
 	n_memory=16
 	cmd_min="python ../MVIN/${file_name} --log_name $log_nameaaa --save_model_name $save_model_name --dataset $dataset

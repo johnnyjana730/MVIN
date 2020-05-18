@@ -21,7 +21,7 @@ def load_data(args):
     if args.attention_cast_st == True and args.dataset[:6] == "amazon":
         entity_index_2_name, rela_index_2_name = load_enti_rela_name(args)
     else:
-        entity_index_2_name, rela_index_2_name = None, None
+        entity_index_2_name, rela_index_2_name = {}, {}
 
     kg, n_entity, n_relation, adj_entity, adj_relation, user_path, user_path_top_k = load_kg(args, train_data)
     print('data loaded.')
@@ -118,7 +118,7 @@ def load_rating(args):
 def load_enti_rela_name(args):
     rating_file = args.path.data + 'meta_Books.json'
     if os.path.exists(rating_file) == False:
-        return None, None
+        return {}, {}
 
     if os.path.exists(f"{args.path.misc}new_meta_Books_dict.pickle") == False:
         new_meta_Books_dict = {}

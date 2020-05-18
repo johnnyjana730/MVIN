@@ -12,7 +12,7 @@ import pickle
 
 
 def topk_settings(args, show_topk, train_data, eval_data, test_data, n_item, save_record_user_list, save_user_list_name):
-    if show_topk:
+    if show_topk or True:
         user_num = 250
         k_list = [1, 2, 5, 10, 25, 50, 100]
         train_record = get_user_record(train_data, True)
@@ -73,9 +73,17 @@ def ctr_eval_case_study(args, user_path, sess, model, data, user_triplet_set, us
         while start + batch_size <= data.shape[0]:
             user_indices, labels, item_indices, entities_data, relations_data, importance_list_0, importance_list_1 = model.eval_case_study(sess, get_feed_dict(args, user_path, model, data, 
                 user_triplet_set, start, start + args.batch_size))
-
             for b_i in range(batch_size):
-                if user_indices[b_i] in user_list and  item_indices[b_i] in item_set_most_pop and labels[b_i] == 0:
+                # print('user_indices[b_i]  = ', user_indices[b_i])
+                # print('item_indices[b_i] = ', item_indices[b_i])
+                # print('labels[b_i] = ', labels[b_i])
+            
+                # print('user_list = ', user_list)
+                # input()
+                # print('user_indices[b_i]  = ', user_indices[b_i] in user_list)
+                # print('item_indices[b_i] = ', item_indices[b_i] in item_set_most_pop)
+                # print('labels[b_i] = ', labels[b_i] == 1)
+                if user_indices[b_i] in user_list and  item_indices[b_i] in item_set_most_pop:
                     eval_log_save.write(f"{'*'* 50}\n")
 
                     eval_log_save.write(f"user_indices = {user_indices[b_i]}, item_indices = {item_indices[b_i]}, labels = {labels[b_i]}\n")
@@ -119,10 +127,12 @@ def ctr_eval_case_study(args, user_path, sess, model, data, user_triplet_set, us
             start += batch_size
 
 def index_2_name(list_array, dictionary):
-    return [dictionary[str(et)] if str(et) in dictionary else et for et in list_array]
+    return [dictionary[str(et)] if str(et) in dictionary else str(et) for et in list_array]
 
 def index_2_name_title(list_array, dictionary):
-    return [dictionary[str(et)] if str(et) in dictionary else et for et in list_array]
+    # print('list_array = ', list_array)
+    # print('dictionary = ', dictionary)
+    return [dictionary[str(et)] if str(et) in dictionary else str(et) for et in list_array]
 
 def topk_eval(sess, args, user_triplet_set, model, user_list, train_record, eval_record, test_record, item_set, k_list, batch_size, mode = 'test'):
     precision_list = {k: [] for k in k_list}

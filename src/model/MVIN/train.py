@@ -100,9 +100,10 @@ def train(args, data, trn_info, show_loss, show_topk):
                 trn_info.update_score(step, eval_score_info)
 
                 training_condition =  early_st_info.update_score(step,eval_score_info.eval_st_score(),sess,model,saver, satistic_list= satistic_list)
-                if training_condition == "EarlyStopping" and args.attention_cast_st == True: 
-                    ctr_eval_case_study(args, user_path, sess, model, test_data, user_triplet_set, user_history_dict, entity_index_2_name, 
-                    rela_index_2_name, user_list, item_set_most_pop, args.batch_size)
+                if training_condition == "EarlyStopping":
+                    if args.attention_cast_st == True: 
+                        ctr_eval_case_study(args, user_path, sess, model, test_data, user_triplet_set, user_history_dict, entity_index_2_name, 
+                        rela_index_2_name, user_list, item_set_most_pop, args.batch_size)
                     break
 
     tf.reset_default_graph()
