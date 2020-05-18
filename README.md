@@ -10,10 +10,10 @@ We propose MVIN,
 ## Citation 
 If you want to use our codes and datasets in your research, please cite:
 ```
-@inproceedings{Tai2019GraphSWAT,
- title={GraphSW: a training protocol based on stage-wise training for GNN-based Recommender Model},
- author={Chang-You Tai and Meng-Ru Wu and Yun-Wei Chu and Shao-Yu Chu},
- year={2019}
+@inproceedings{Tai2020MVIN,
+ title={SIGIR 2020. MVIN: Learning Multiview Items for Recommendation},
+ author={Chang-You Tai, Meng-Ru Wu, Yun-Wei Chu, Shao-Yu Chu, and Lun-Wei Ku},
+ year={2020}
 }
 ```
 ## Files in the folder
