@@ -19,15 +19,13 @@ If you want to use our codes and datasets in your research, please cite:
 ## Files in the folder
 
 - `data/`: datasets
-  - `Book-Crossing/`
   - `MovieLens-1M/`
   - `amazon-book_20core/`
   - `last-fm_50core/`
-  - `music/`
-  - `yelp2018_20core/`
-- `src/`: implementation of GraphSW.
+- `src/`: implementation of MVIN.
 - `output/`: storing log files
 - `misc/`: storing users being evaluating, popular items, and sharing embeddings.
+
 ## Environment Requirement
 The code has been tested running under Python 3.6.5. The required packages are as follows:
 * tensorflow == 1.12.0
