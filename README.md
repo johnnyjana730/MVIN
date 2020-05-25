@@ -4,6 +4,8 @@ MVIN: Learning Multiview Items for Recommendation, SIGIR 2020
 This repository is the implementation of MVIN ([arXiv]()):
 > Chang-You Tai, Meng-Ru Wu, Yun-Wei Chu, Shao-Yu Chu, and Lun-Wei Ku. SIGIR 2020. MVIN: Learning Multiview Items for Recommendation
 
+<img src="https://github.com/johnnyjana730/MVIN/blob/master/img.PNG" height="400">
+
 ## Introduction
 We propose MVIN,
 
