@@ -7,7 +7,7 @@ This repository is the implementation of MVIN ([arXiv]()):
 <img src="https://github.com/johnnyjana730/MVIN/blob/master/img.PNG">
 
 ## Introduction
-We propose the multi-view item network (MVIN), a GNN-based rec-ommendation model which provides superior recommendations bydescribing items from a unique mixed view from user and entity angles.
+We propose the multi-view item network (MVIN), a GNN-based rec-ommendation model which provides superior recommendations bydescribing item-s from a unique mixed view from user and entity angles.
 
 ## Citation 
 If you want to use our codes and datasets in your research, please cite:
