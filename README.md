@@ -55,10 +55,10 @@ $ bash main_run.sh "MVIN" $dataset $gpu
 $ cd src/bash/
 $ bash main_run.sh $model $dataset $gpu
 ```
-some arguments:
-$dataset: one of "amazon-book", "movie", "last_fm"
-$gpu: gpu number
-$model: "KGCN", "RippleNet"
+* some arguments:
+  * $dataset: one of "amazon-book", "movie", "last_fm"
+  * $gpu: gpu number
+  * $model: "KGCN", "RippleNet"
  
 ## Example to Run the Attention Codes
 ```
