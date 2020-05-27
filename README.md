@@ -45,20 +45,20 @@ $ conda activate MVIN
 
 ## Example to Run the Codes
 
---MVIN
+* MVIN
 ```
 $ cd src/bash/
 $ bash main_run.sh "MVIN" $dataset $gpu
 ```
---other baseline models
+* other baseline models
 ```
 $ cd src/bash/
 $ bash main_run.sh $model $dataset $gpu
 ```
 some arguments:
- $dataset: one of "amazon-book", "movie", "last_fm"
- $gpu: gpu number
- $model: "KGCN", "RippleNet"
+$dataset: one of "amazon-book", "movie", "last_fm"
+$gpu: gpu number
+$model: "KGCN", "RippleNet"
  
 ## Example to Run the Attention Codes
 ```
