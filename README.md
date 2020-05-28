@@ -60,14 +60,21 @@ $ bash main_run.sh $model $dataset $gpu
   * $gpu: gpu number
   * $model: "KGCN", "RippleNet"
 
-* `alg_type`
-  * It specifies the type of graph convolutional layer.
-  * Here we provide three options:
-    * `kgat` (by default), proposed in [KGAT: Knowledge Graph Attention Network for Recommendation](xx), KDD2019. Usage: `--alg_type kgat`.
-    * `gcn`, proposed in [Semi-Supervised Classification with Graph Convolutional Networks](https://openreview.net/pdf?id=SJU4ayYgl), ICLR2018. Usage: `--alg_type gcn`.
-    * `graphsage`, propsed in [Inductive Representation Learning on Large Graphs.](https://papers.nips.cc/paper/6703-inductive-representation-learning-on-large-graphs.pdf), NeurIPS2017. Usage: `--alg_type graphsage`.
-    
- 
+* `model`
+  * It specifies the type of model.
+  * Here we provide four options, including MVIN and five baseline models:
+    * `MVIN` (by default), proposed in [MVIN: Learning Multiview Items for Recommendation](https://arxiv.org/abs/2005.12516), SIGIR 2020. Usage: `--model_type MVIN`.
+    * `KGAT`, proposed in [KGAT: Knowledge Graph Attention Network for Recommendation](https://arxiv.org/abs/1905.07854), KDD 2019. Usage: `--model_type KGAT`.
+    * `KGCN`, proposed in [Knowledge Graph Convolutional Networks for Recommender Systems](https://arxiv.org/abs/1904.12575), SIGIR2011. Usage: `--model_type KGCN`.
+    * `RippleNet`, proposed in [RippleNet: Propagating User Preferences on the Knowledge Graph for Recommender Systems](https://arxiv.org/pdf/1803.03467.pdf), CIKM 2018. Usage: `--model_type RippleNet`.
+  * You can find other baselines in Github.
+  
+  * `dataset`
+  * It specifies the dataset.
+  * Here we provide three options, including  * `Amazon-book`, `Last-FM`, and `Yelp2018`.
+  
+   * `gpu`
+  * It specifies the gpu, ex. * `0`, `1`, and `2`.
 
  
 ## Example to Run the Attention Codes
