@@ -1,11 +1,13 @@
 # MVIN
 MVIN: Learning Multiview Items for Recommendation, SIGIR 2020
 
-This repository is the implementation of MVIN ([arXiv]()):
+This repository is the implementation of MVIN ([arXiv](https://arxiv.org/abs/2005.12516)):
 > Chang-You Tai, Meng-Ru Wu, Yun-Wei Chu, Shao-Yu Chu, and Lun-Wei Ku. SIGIR 2020. MVIN: Learning Multiview Items for Recommendation
 
+<img src="https://github.com/johnnyjana730/MVIN/blob/master/img.PNG">
+
 ## Introduction
-We propose MVIN,
+We propose the multi-view item network (MVIN), a GNN-based recommendation model which provides superior recommend-ations bydescribing items from a unique mixed view from user and entity angles.
 
 ## Citation 
 If you want to use our codes and datasets in your research, please cite:
