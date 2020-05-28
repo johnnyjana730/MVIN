@@ -24,7 +24,7 @@ If you want to use our codes and datasets in your research, please cite:
   - `MovieLens-1M/`
   - `amazon-book_20core/`
   - `last-fm_50core/`
-- `src/`: implementation of MVIN.
+- `src/model/`: implementation of MVIN.
 - `output/`: storing log files
 - `misc/`: storing users being evaluating, popular items, and sharing embeddings.
 
@@ -44,14 +44,24 @@ $ conda activate MVIN
 ```
 
 ## Example to Run the Codes
-- MVIN  
+
+* MVIN
 ```
-$ cd src/model/bash/
-$ bash main_az_book.sh 1 # e.g. az_book, gpu=1
+$ cd src/bash/
+$ bash main_run.sh "MVIN" $dataset $gpu
 ```
-  
+* other baseline models
+```
+$ cd src/bash/
+$ bash main_run.sh $model $dataset $gpu
+```
+* some arguments:
+  * $dataset: one of "amazon-book", "movie", "last_fm"
+  * $gpu: gpu number
+  * $model: "KGCN", "RippleNet"
+ 
 ## Example to Run the Attention Codes
 ```
-$ cd src/model/bash/
-$ bash main_att_case_st.sh 1 # e.g. gpu=1
+$ cd src/bash/
+$ bash main_att_case_st.sh $gpu
 ```
