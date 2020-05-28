@@ -59,6 +59,16 @@ $ bash main_run.sh $model $dataset $gpu
   * $dataset: one of "amazon-book", "movie", "last_fm"
   * $gpu: gpu number
   * $model: "KGCN", "RippleNet"
+
+* `alg_type`
+  * It specifies the type of graph convolutional layer.
+  * Here we provide three options:
+    * `kgat` (by default), proposed in [KGAT: Knowledge Graph Attention Network for Recommendation](xx), KDD2019. Usage: `--alg_type kgat`.
+    * `gcn`, proposed in [Semi-Supervised Classification with Graph Convolutional Networks](https://openreview.net/pdf?id=SJU4ayYgl), ICLR2018. Usage: `--alg_type gcn`.
+    * `graphsage`, propsed in [Inductive Representation Learning on Large Graphs.](https://papers.nips.cc/paper/6703-inductive-representation-learning-on-large-graphs.pdf), NeurIPS2017. Usage: `--alg_type graphsage`.
+    
+ 
+
  
 ## Example to Run the Attention Codes
 ```
