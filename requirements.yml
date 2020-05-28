@@ -1,4 +1,4 @@
-name: graph-stage
+name: MVIN
 channels:
   - defaults
 dependencies:
