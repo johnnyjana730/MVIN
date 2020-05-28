@@ -56,9 +56,6 @@ $ cd src/bash/
 $ bash main_run.sh $model $dataset $gpu
 ```
 * some arguments:
-  * $dataset: one of "amazon-book", "movie", "last_fm"
-  * $gpu: gpu number
-  * $model: "KGCN", "RippleNet"
 
 * `model`
   * It specifies the type of model.
