@@ -12,10 +12,21 @@ We propose the multi-view item network (MVIN), a GNN-based recommendation model 
 ## Citation 
 If you want to use our codes and datasets in your research, please cite:
 ```
-@inproceedings{Tai2020MVIN,
- title={SIGIR 2020. MVIN: Learning Multiview Items for Recommendation},
- author={Chang-You Tai, Meng-Ru Wu, Yun-Wei Chu, Shao-Yu Chu, and Lun-Wei Ku},
- year={2020}
+@ARTICLE{Tai2020MVIN,
+       author = {{Tai}, Chang-You and {Wu}, Meng-Ru and {Chu}, Yun-Wei and
+         {Chu}, Shao-Yu and {Ku}, Lun-Wei},
+        title = "{MVIN: Learning Multiview Items for Recommendation}",
+      journal = {arXiv e-prints},
+     keywords = {Computer Science - Information Retrieval, Computer Science - Machine Learning},
+         year = 2020,
+        month = may,
+          eid = {arXiv:2005.12516},
+        pages = {arXiv:2005.12516},
+archivePrefix = {arXiv},
+       eprint = {2005.12516},
+ primaryClass = {cs.IR},
+       adsurl = {https://ui.adsabs.harvard.edu/abs/2020arXiv200512516T},
+      adsnote = {Provided by the SAO/NASA Astrophysics Data System}
 }
 ```
 ## Files in the folder
