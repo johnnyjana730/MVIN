@@ -72,7 +72,7 @@ $ bash main_run.sh $model $dataset $gpu
   * It specifies the type of model.
   * Here we provide four options, including MVIN and five baseline models:
     * `MVIN` (by default), proposed in [MVIN: Learning Multiview Items for Recommendation](https://arxiv.org/abs/2005.12516), SIGIR 2020. Usage: `model=MVIN`.
-    * `KGAT`, proposed in [KGAT: Knowledge Graph Attention Network for Recommendation](https://arxiv.org/abs/1905.07854), KDD 2019. Usage: `model=KGAT`.
+    * `KGAT`, proposed in [KGAT: Knowledge Graph Attention Network for Recommendation](https://arxiv.org/abs/1905.07854), KDD 2019. Usage: `model=KGAT`. (under preparing)
     * `KGCN`, proposed in [Knowledge Graph Convolutional Networks for Recommender Systems](https://arxiv.org/abs/1904.12575), SIGIR2011. Usage: `model=KGCN`.
     * `RippleNet`, proposed in [RippleNet: Propagating User Preferences on the Knowledge Graph for Recommender Systems](https://arxiv.org/pdf/1803.03467.pdf), CIKM 2018. Usage: `model=RippleNet`.
   * You can find other baselines in Github.
