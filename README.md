@@ -79,7 +79,7 @@ $ bash main_run.sh $model $dataset $gpu
   
 * `dataset`
   * It specifies the dataset.
-  * Here we provide three options, including  * 'amazon-book', 'movie', or 'last_fm'.
+  * Here we provide three options, including  * `amazon-book`, `movie`, or `last_fm`.
 
 * `gpu`
   * It specifies the gpu, e.g. * `0`, `1`, and `2`.
