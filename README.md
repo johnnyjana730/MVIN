@@ -79,10 +79,10 @@ $ bash main_run.sh $model $dataset $gpu
   
 * `dataset`
   * It specifies the dataset.
-  * Here we provide three options, including  * `Amazon-book`, `Last-FM`, and `Yelp2018`.
+  * Here we provide three options, including  * 'amazon-book', 'movie', or 'last_fm'.
 
 * `gpu`
-  * It specifies the gpu, ex. * `0`, `1`, and `2`.
+  * It specifies the gpu, e.g. * `0`, `1`, and `2`.
 
  
 ## Example to Run the Attention Codes
