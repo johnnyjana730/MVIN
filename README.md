@@ -60,6 +60,7 @@ $ conda activate MVIN
 ```
 $ cd src/bash/
 $ bash main_run.sh "MVIN" $dataset $gpu
+
 ```
 * other baseline models
 ```
@@ -89,4 +90,12 @@ $ bash main_run.sh $model $dataset $gpu
 ```
 $ cd src/bash/
 $ bash main_att_case_st.sh $gpu
+```
+
+# ISSUE
+
+* `syntax error near unexpected token elif
+```
+$ cd src/bash/
+$ sed -i -e 's/\r$//' *.sh
 ```
