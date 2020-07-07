@@ -92,7 +92,7 @@ $ cd src/bash/
 $ bash main_att_case_st.sh $gpu
 ```
 
-# ISSUE
+# Issue
 
 * `main_run.sh syntax error near unexpected token elif`
 ```
