@@ -94,7 +94,7 @@ $ bash main_att_case_st.sh $gpu
 
 # ISSUE
 
-* `syntax error near unexpected token elif
+* `main_run.sh syntax error near unexpected token elif`
 ```
 $ cd src/bash/
 $ sed -i -e 's/\r$//' *.sh
