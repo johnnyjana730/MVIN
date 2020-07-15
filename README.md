@@ -50,7 +50,7 @@ The code has been tested running under Python 3.6.5. The required packages are a
 ```
 $ cd MVIN
 $ conda deactivate
-$ conda create -f requirements.yml
+$ conda env create -f requirements.yml
 $ conda activate MVIN
 ```
 
