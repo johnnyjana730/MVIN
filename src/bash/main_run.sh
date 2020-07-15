@@ -52,6 +52,20 @@ then
     else
 	echo "Invalid dataset! Dataset should be 'amazon-book', 'movie', or 'last_fm'."
     fi
+elif [ $model_type = "KGAT" ]
+then 
+    if [ $dataset = "amazon-book" ]
+    then
+	bash kgat_az_book.sh $gpu
+    elif [ $dataset = "movie" ]
+    then
+	bash kgat_movie.sh $gpu
+    elif [ $dataset = "last_fm" ]
+    then
+	bash kgat_last_fm.sh $gpu
+    else
+	echo "Invalid dataset! Dataset should be 'amazon-book', 'movie', or 'last_fm'."
+    fi
 else 
     echo "Invalid model!"
     exit 1
