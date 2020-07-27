@@ -12,21 +12,21 @@ We propose the multi-view item network (MVIN), a GNN-based recommendation model 
 ## Citation 
 If you want to use our codes and datasets in your research, please cite:
 ```
-@ARTICLE{Tai2020MVIN,
-       author = {{Tai}, Chang-You and {Wu}, Meng-Ru and {Chu}, Yun-Wei and
-         {Chu}, Shao-Yu and {Ku}, Lun-Wei},
-        title = "{MVIN: Learning Multiview Items for Recommendation}",
-      journal = {arXiv e-prints},
-     keywords = {Computer Science - Information Retrieval, Computer Science - Machine Learning},
-         year = 2020,
-        month = may,
-          eid = {arXiv:2005.12516},
-        pages = {arXiv:2005.12516},
-archivePrefix = {arXiv},
-       eprint = {2005.12516},
- primaryClass = {cs.IR},
-       adsurl = {https://ui.adsabs.harvard.edu/abs/2020arXiv200512516T},
-      adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+@inproceedings{10.1145/3397271.3401126,
+author = {Tai, Chang-You and Wu, Meng-Ru and Chu, Yun-Wei and Chu, Shao-Yu and Ku, Lun-Wei},
+title = {MVIN: Learning Multiview Items for Recommendation},
+year = {2020},
+isbn = {9781450380164},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3397271.3401126},
+doi = {10.1145/3397271.3401126},
+booktitle = {Proceedings of the 43rd International ACM SIGIR Conference on Research and Development in Information Retrieval},
+pages = {99–108},
+numpages = {10},
+keywords = {recommendation, knowledge graph, higher-order connectivity, graph neural network, embedding propagation},
+location = {Virtual Event, China},
+series = {SIGIR ’20}
 }
 ```
 ## Files in the folder
