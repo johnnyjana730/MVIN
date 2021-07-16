@@ -12,21 +12,21 @@ We propose the multi-view item network (MVIN), a GNN-based recommendation model 
 ## Citation 
 If you want to use our codes and datasets in your research, please cite:
 ```
-@inproceedings{10.1145/3397271.3401126,
-author = {Tai, Chang-You and Wu, Meng-Ru and Chu, Yun-Wei and Chu, Shao-Yu and Ku, Lun-Wei},
-title = {MVIN: Learning Multiview Items for Recommendation},
-year = {2020},
-isbn = {9781450380164},
+@inproceedings{10.1145/3404835.3462980,
+author = {Tai, Chang-You and Huang, Chien-Kun and Huang, Liang-Ying and Ku, Lun-Wei},
+title = {Knowledge Based Hyperbolic Propagation},
+year = {2021},
+isbn = {9781450380379},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3397271.3401126},
-doi = {10.1145/3397271.3401126},
-booktitle = {Proceedings of the 43rd International ACM SIGIR Conference on Research and Development in Information Retrieval},
-pages = {99–108},
-numpages = {10},
-keywords = {recommendation, knowledge graph, higher-order connectivity, graph neural network, embedding propagation},
-location = {Virtual Event, China},
-series = {SIGIR ’20}
+url = {https://doi.org/10.1145/3404835.3462980},
+doi = {10.1145/3404835.3462980},
+booktitle = {Proceedings of the 44th International ACM SIGIR Conference on Research and Development in Information Retrieval},
+pages = {1945–1949},
+numpages = {5},
+keywords = {recommendation, hyperbolic embedding learning, graph neural network, knowledge graph},
+location = {Virtual Event, Canada},
+series = {SIGIR '21}
 }
 ```
 ## Files in the folder
